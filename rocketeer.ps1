@@ -7,7 +7,8 @@ Param(
 	[Switch]$EnableSymStore,
 	[Switch]$Clean,
 	[Switch]$Zip,
-	[Switch]$NoBuild,
+	[Switch]$MakeDistro,
+	[Switch]$Build,
 
 	# Target platforms
 	[Switch]$HostPlatformOnly,
@@ -16,7 +17,7 @@ Param(
 	[Switch]$Mac,
 	[Switch]$Android,
 	[Switch]$IOS,
-	[Switch]$TVO,
+	[Switch]$TVOS,
 	[Switch]$Linux,
 	[Switch]$HTML5,
 	[Switch]$Switch,
@@ -141,30 +142,31 @@ Welcome Rocketeer, a simple script to build your Unreal Engine 4 Rocket distros!
 
 Usage: rocketeer.ps1 root [Options] [Target Platforms]
 
-	- root: Engine root, if noting set we will use the engine this script is in
+ root: path to engine root, if noting set we will use the engine this script is in
 
 Options:
-	- BuildDDC: Build a full DDC, this may take quite some time
-	- SignExecutables: Sign all build executebales
-	- EnableSymStore: Enable debug symbols
-	- Clean: Make a rebuild cleaning any previous stuff
-	- Zip: Zip the final build
-	- NoBuild: Do not execute the build process
+ -BuildDDC: Build a full DDC, this may take quite some time
+ -SignExecutables: Sign all build executebales
+ -EnableSymStore: Enable debug symbols
+ -Clean: Make a rebuild cleaning any previous stuff
+ -Zip: Zip the final build
+ -MakeDistro: Create an installed engine build
+ -Build: Build the engine solution first, if -Clean is specified we will rebuild the solution 
 
 Target Platforms:
-	- HostPlatformOnly: Only build for the current OS
-	- Win64: Build with Win64 support
-	- Win32: Build with Win32 support
-	- Mac: Build with Mac support
-	- Android: Build with Android support
-	- IOS: Build with IOS support
-	- TVO: Build with TVO support
-	- Linux: Build with Linux support
-	- HTML5: Build with HTML5 support
-	- Switch: Build with Switch support
-	- PS4: Build with PS4 support
-	- XboxOne: Build with XboxOne support
-	- AllTargets: Will build with support for all targets
+ -HostPlatformOnly: Only build for the current OS
+ -Win64: Build with Win64 support
+ -Win32: Build with Win32 support
+ -Mac: Build with Mac support
+ -Android: Build with Android support
+ -IOS: Build with IOS support
+ -TVOS: Build with TVOS support
+ -Linux: Build with Linux support
+ -HTML5: Build with HTML5 support
+ -Switch: Build with Switch support
+ -PS4: Build with PS4 support
+ -XboxOne: Build with XboxOne support
+ -AllTargets: Will build with support for all targets
 "@
 
 if ($help -or $psboundparameters.count -eq 0)
@@ -190,222 +192,231 @@ if (-not (Test-Path $automationTool))
 }
 
 #
-# Build command line
+# Build the whole thing
 #
 
-if (-not $NoBuild)
+if ($Build)
 {
-
-$commandline = 'BuildGraph -target="Make Installed Build Win64" -script="Engine/Build/InstalledEngineBuild.xml"'
-
-#
-# Choose platforms
-#
-
-if ($AllTargets)
-{
-	$commandline += (SetFlag true "WithWin64")
-	$commandline += (SetFlag true "WithWin32")
-	$commandline += (SetFlag true "WithMac")
-	$commandline += (SetFlag true "WithAndroid")
-	$commandline += (SetFlag true "WithIOS")
-	$commandline += (SetFlag true "WithTVO")
-	$commandline += (SetFlag true "WithLinux")
-	$commandline += (SetFlag true "WithHTML5")
-	$commandline += (SetFlag true "WithSwitch")
-	$commandline += (SetFlag true "WithPS4")
-	$commandline += (SetFlag true "WithXboxOne")
-}
-elseif ($HostPlatformOnly)
-{
-	$commandline += (SetFlag $HostPlatformOnly "HostPlatformOnly")
-}
-elseif ($HostPlatformOnly -or $Win64 -or $Win32 -or $Mac -or $Android -or $IOS -or $TVO -or $Linux -or $HTML5 -or $Switch -or $PS4 -or $XboxOne)
-{
-	$commandline += (SetFlag $Win64 	"WithWin64")
-	$commandline += (SetFlag $Win32 	"WithWin32")
-	$commandline += (SetFlag $Mac 		"WithMac")
-	$commandline += (SetFlag $Android 	"WithAndroid")
-	$commandline += (SetFlag $IOS 		"WithIOS")
-	$commandline += (SetFlag $TVO 		"WithTVO")
-	$commandline += (SetFlag $Linux 	"WithLinux")
-	$commandline += (SetFlag $HTML5 	"WithHTML5")
-	$commandline += (SetFlag $Switch 	"WithSwitch")
-	$commandline += (SetFlag $PS4 		"WithPS4")
-	$commandline += (SetFlag $XboxOne 	"WithXboxOne")
-}
-else
-{
-	WriteInfo $helpMessage
-	Die "Please specify your target platform"
+	WriteError "Sorry but building the engine and all before is still a TODO!"
 }
 
 #
-# Options
+# Make the distro
 #
 
-$commandline += (SetFlag $BuildDDC "WithDDC")
-$commandline += (SetFlag $SignExecutables "SignExecutables")
-$commandline += (SetFlag $EnableSymStore "EnableSymStore")
-
-if ($Clean)
+if ($MakeDistro)
 {
-	$commandline += " -Clean"
-}
 
-#
-# Start Rocket builld
-#
+	$commandline = 'BuildGraph -target="Make Installed Build Win64" -script="Engine/Build/InstalledEngineBuild.xml"'
 
-$buildInfo = "Building Unreal Engine Editor Distribution for Win64"
+	#
+	# Choose platforms
+	#
 
-# Log options
-$buildInfo += 
+	if ($AllTargets)
+	{
+		$commandline += (SetFlag true "WithWin64")
+		$commandline += (SetFlag true "WithWin32")
+		$commandline += (SetFlag true "WithMac")
+		$commandline += (SetFlag true "WithAndroid")
+		$commandline += (SetFlag true "WithIOS")
+		$commandline += (SetFlag true "WithTVOS")
+		$commandline += (SetFlag true "WithLinux")
+		$commandline += (SetFlag true "WithHTML5")
+		$commandline += (SetFlag true "WithSwitch")
+		$commandline += (SetFlag true "WithPS4")
+		$commandline += (SetFlag true "WithXboxOne")
+	}
+	elseif ($HostPlatformOnly)
+	{
+		$commandline += (SetFlag $HostPlatformOnly "HostPlatformOnly")
+	}
+	elseif ($HostPlatformOnly -or $Win64 -or $Win32 -or $Mac -or $Android -or $IOS -or $TVOS -or $Linux -or $HTML5 -or $Switch -or $PS4 -or $XboxOne)
+	{
+		$commandline += (SetFlag $Win64 	"WithWin64")
+		$commandline += (SetFlag $Win32 	"WithWin32")
+		$commandline += (SetFlag $Mac 		"WithMac")
+		$commandline += (SetFlag $Android 	"WithAndroid")
+		$commandline += (SetFlag $IOS 		"WithIOS")
+		$commandline += (SetFlag $TVOS 		"WithTVOS")
+		$commandline += (SetFlag $Linux 	"WithLinux")
+		$commandline += (SetFlag $HTML5 	"WithHTML5")
+		$commandline += (SetFlag $Switch 	"WithSwitch")
+		$commandline += (SetFlag $PS4 		"WithPS4")
+		$commandline += (SetFlag $XboxOne 	"WithXboxOne")
+	}
+	else
+	{
+		WriteInfo $helpMessage
+		Die "Please specify your target platform"
+	}
+
+	#
+	# Options
+	#
+
+	$commandline += (SetFlag $BuildDDC "WithDDC")
+	$commandline += (SetFlag $SignExecutables "SignExecutables")
+	$commandline += (SetFlag $EnableSymStore "EnableSymStore")
+
+	if ($Clean)
+	{
+		$commandline += " -Clean"
+	}
+
+	#
+	# Start Rocket builld
+	#
+
+	$buildInfo = "Building Unreal Engine Editor Distribution for Win64"
+
+	# Log options
+	$buildInfo += 
 @"
 
  Options:
 "@
-if ($BuildDDC)
-{
-	$buildInfo += 
+	if ($BuildDDC)
+	{
+		$buildInfo += 
 @"
 
   - Building DDC
 "@
-}
-if ($SignExecutables)
-{
-	$buildInfo += 
+	}
+	if ($SignExecutables)
+	{
+		$buildInfo += 
 @"
 
   - Signing executebales
 "@
-}
-if ($EnableSymStore)
-{
-	$buildInfo += 
+	}
+	if ($EnableSymStore)
+	{
+		$buildInfo += 
 @"
 
   - Enable symbol store
 "@
-}
-if ($Clean)
-{
-	$buildInfo += 
+	}
+	if ($Clean)
+	{
+		$buildInfo += 
 @"
 
   - Rebuild
 "@
-}
-if ($Zip)
-{
-	$buildInfo += 
+	}
+	if ($Zip)
+	{
+		$buildInfo += 
 @"
 
   - Zip
 "@
-}
+	}
 
-# Target platforms
+	# Target platforms
 
-$buildInfo += 
+	$buildInfo += 
 @"
 
  Target Platforms:
 "@
-if ($Win64 -or $HostPlatformOnly)
-{
-	$buildInfo += 
+	if ($Win64 -or $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Win64
 "@
-}
-if ($Win32 -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($Win32 -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Win32
 "@
-}
-if ($Mac -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($Mac -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Mac
 "@
-}
-if ($Android -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($Android -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Android
 "@
-}
-if ($IOS -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($IOS -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - IOS
 "@
-}
-if ($TVO -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($TVOS -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
-  - TVO
+  - TVOS
 "@
-}
-if ($Linux -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($Linux -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Linux
 "@
-}
-if ($HTML5 -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($HTML5 -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - HTML5
 "@
-}
-if ($Switch -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($Switch -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - Switch
 "@
-}
-if ($PS4 -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($PS4 -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - PS4
 "@
-}
-if ($XboxOne -and -not $HostPlatformOnly)
-{
-	$buildInfo += 
+	}
+	if ($XboxOne -and -not $HostPlatformOnly)
+	{
+		$buildInfo += 
 @"
 
   - XboxOne
 "@
-}
+	}
 
 
-# Execute automation tool
-WriteHeader $buildInfo
-iex ("{0} {1}" -f $automationTool,$commandline)
+	# Execute automation tool
+	WriteHeader $buildInfo
+	iex ("{0} {1}" -f $automationTool,$commandline)
 }
 
 #

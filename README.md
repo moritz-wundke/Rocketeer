@@ -10,7 +10,8 @@ Options:
  - `-EnableSymStore`: Enable debug symbols
  - `-Clean`: Make a rebuild cleaning any previous stuff
  - `-Zip`: Zip the final build
- - `-NoBuild`: Do not execute the build process
+ - `-MakeDistro`: Create an installed engine build
+ - `-Build`: Build the engine solution first, if -Clean is specified we will rebuild the solution 
 
 Target Platforms:
  - `-HostPlatformOnly`: Only build for the current OS
