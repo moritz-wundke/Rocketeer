@@ -7,6 +7,7 @@ Param(
 	[Switch]$EnableSymStore,
 	[Switch]$Clean,
 	[Switch]$Zip,
+	[Switch]$NoBuild,
 
 	# Target platforms
 	[Switch]$HostPlatformOnly,
@@ -148,6 +149,7 @@ Options:
 	- EnableSymStore: Enable debug symbols
 	- Clean: Make a rebuild cleaning any previous stuff
 	- Zip: Zip the final build
+	- NoBuild: Do not execute the build process
 
 Target Platforms:
 	- HostPlatformOnly: Only build for the current OS
@@ -190,6 +192,9 @@ if (-not (Test-Path $automationTool))
 #
 # Build command line
 #
+
+if (-not $NoBuild)
+{
 
 $commandline = 'BuildGraph -target="Make Installed Build Win64" -script="Engine/Build/InstalledEngineBuild.xml"'
 
@@ -401,6 +406,7 @@ if ($XboxOne -and -not $HostPlatformOnly)
 # Execute automation tool
 WriteHeader $buildInfo
 iex ("{0} {1}" -f $automationTool,$commandline)
+}
 
 #
 # Post build options
@@ -418,7 +424,7 @@ if ($Zip)
 	}
 	$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}\Windows' -f $root, $engineName))
 	$engineZipPath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\UnrealEngine_Win64.zip' -f $root))
-	WriteInfo ("Zipping engine to: {0}" -f $engineZipPath )
+	WriteHeader ("Zipping engine to: {0}" -f $engineZipPath )
 	If (Test-Path $engineZipPath){
 		Remove-Item $engineZipPath
 	}
