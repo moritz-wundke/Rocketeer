@@ -6,6 +6,7 @@ Param(
 	[Switch]$SignExecutables,
 	[Switch]$EnableSymStore,
 	[Switch]$Clean,
+	[Switch]$Zip,
 
 	# Target platforms
 	[Switch]$HostPlatformOnly,
@@ -117,6 +118,10 @@ function Unzip($zip, $destination)
 {	
 	[System.IO.Compression.ZipFile]::ExtractToDirectory($zip, $destination)
 }
+function Zip($source, $zip)
+{
+	[System.IO.Compression.ZipFile]::CreateFromDirectory($source, $zip, [System.IO.Compression.CompressionLevel]::Fastest, $false)
+}
 
 function SetFlag($value, $name)
 {
@@ -142,6 +147,7 @@ Options:
 	- SignExecutables: Sign all build executebales
 	- EnableSymStore: Enable debug symbols
 	- Clean: Make a rebuild cleaning any previous stuff
+	- Zip: Zip the final build
 
 Target Platforms:
 	- HostPlatformOnly: Only build for the current OS
@@ -242,13 +248,182 @@ if ($Clean)
 	$commandline += " -Clean"
 }
 
- 
+#
+# Start Rocket builld
+#
 
-$buildInfo = "Building Rocket Distribution"
+$buildInfo = "Building Unreal Engine Editor Distribution for Win64"
 
+# Log options
+$buildInfo += 
+@"
+
+ Options:
+"@
+if ($BuildDDC)
+{
+	$buildInfo += 
+@"
+
+  - Building DDC
+"@
+}
+if ($SignExecutables)
+{
+	$buildInfo += 
+@"
+
+  - Signing executebales
+"@
+}
+if ($EnableSymStore)
+{
+	$buildInfo += 
+@"
+
+  - Enable symbol store
+"@
+}
+if ($Clean)
+{
+	$buildInfo += 
+@"
+
+  - Rebuild
+"@
+}
+if ($Zip)
+{
+	$buildInfo += 
+@"
+
+  - Zip
+"@
+}
+
+# Target platforms
+
+$buildInfo += 
+@"
+
+ Target Platforms:
+"@
+if ($Win64 -or $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Win64
+"@
+}
+if ($Win32 -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Win32
+"@
+}
+if ($Mac -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Mac
+"@
+}
+if ($Android -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Android
+"@
+}
+if ($IOS -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - IOS
+"@
+}
+if ($TVO -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - TVO
+"@
+}
+if ($Linux -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Linux
+"@
+}
+if ($HTML5 -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - HTML5
+"@
+}
+if ($Switch -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - Switch
+"@
+}
+if ($PS4 -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - PS4
+"@
+}
+if ($XboxOne -and -not $HostPlatformOnly)
+{
+	$buildInfo += 
+@"
+
+  - XboxOne
+"@
+}
+
+
+# Execute automation tool
 WriteHeader $buildInfo
-
 iex ("{0} {1}" -f $automationTool,$commandline)
+
+#
+# Post build options
+#
+
+if ($Zip)
+{
+	if($BuildDDC)
+	{
+		$engineName = "Engine"
+	}
+	else
+	{
+		$engineName = "Engine"
+	}
+	$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}\Windows' -f $root, $engineName))
+	$engineZipPath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\UnrealEngine_Win64.zip' -f $root))
+	WriteInfo ("Zipping engine to: {0}" -f $engineZipPath )
+	If (Test-Path $engineZipPath){
+		Remove-Item $engineZipPath
+	}
+	Zip $enginePath $engineZipPath
+}
 
 }
 finally
