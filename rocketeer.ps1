@@ -416,13 +416,13 @@ if ($Zip)
 {
 	if($BuildDDC)
 	{
-		$engineName = "Engine"
+		$engineName = "InstalledDDC"
 	}
 	else
 	{
-		$engineName = "Engine"
+		$engineName = "Engine\Windows"
 	}
-	$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}\Windows' -f $root, $engineName))
+	$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}' -f $root, $engineName))
 	$engineZipPath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\UnrealEngine_Win64.zip' -f $root))
 	WriteHeader ("Zipping engine to: {0}" -f $engineZipPath )
 	If (Test-Path $engineZipPath){
