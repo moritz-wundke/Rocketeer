@@ -1,5 +1,6 @@
 Param(
 	[string]$root = $null,
+	[string]$output = $null,
 
 	# Build options
 	[Switch]$BuildDDC,
@@ -9,6 +10,9 @@ Param(
 	[Switch]$Zip,
 	[Switch]$MakeDistro,
 	[Switch]$Build,
+
+	# Sync options
+	[Switch]$NoPDBs,
 
 	# Target platforms
 	[Switch]$HostPlatformOnly,
@@ -140,9 +144,10 @@ $helpMessage =
 Welcome Rocketeer, a simple script to build your Unreal Engine 4 Rocket distros!
 ================================================================================
 
-Usage: rocketeer.ps1 root [Options] [Target Platforms]
+Usage: rocketeer.ps1 -root -output [Options] [Target Platforms]
 
  root: path to engine root, if noting set we will use the engine this script is in
+ output: path to the destination directory to publish the build too (network locations suported)
 
 Options:
  -BuildDDC: Build a full DDC, this may take quite some time
@@ -151,7 +156,8 @@ Options:
  -Clean: Make a rebuild cleaning any previous stuff
  -Zip: Zip the final build
  -MakeDistro: Create an installed engine build
- -Build: Build the engine solution first, if -Clean is specified we will rebuild the solution 
+ -Build: Build the engine solution first, if -Clean is specified we will rebuild the solution
+ -NoPDBs: Do not sync pdb files
 
 Target Platforms:
  -HostPlatformOnly: Only build for the current OS
@@ -178,6 +184,9 @@ if ($help -or $psboundparameters.count -eq 0)
 #
 # Find AutomationTool
 #
+
+echo $root
+echo $output
 
 if ($root -eq "" -and $root -eq [String]::Empty)
 {
@@ -423,23 +432,46 @@ if ($MakeDistro)
 # Post build options
 #
 
+if($BuildDDC)
+{
+	$engineName = "InstalledDDC"
+}
+else
+{
+	$engineName = "Engine\Windows"
+}
+$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}' -f $root, $engineName))
+$engineZipPath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\UnrealEngine_Win64.zip' -f $root))
+
 if ($Zip)
 {
-	if($BuildDDC)
-	{
-		$engineName = "InstalledDDC"
-	}
-	else
-	{
-		$engineName = "Engine\Windows"
-	}
-	$enginePath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\{1}' -f $root, $engineName))
-	$engineZipPath = [System.IO.Path]::GetFullPath(('{0}\LocalBuilds\UnrealEngine_Win64.zip' -f $root))
 	WriteHeader ("Zipping engine to: {0}" -f $engineZipPath )
 	If (Test-Path $engineZipPath){
 		Remove-Item $engineZipPath
 	}
 	Zip $enginePath $engineZipPath
+}
+
+
+#
+# Sync engine build output to a given path
+#
+
+if ($output -ne "" -and $root -ne [String]::Empty)
+{
+	if ($NoPDBs)
+	{
+		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Intermediate Source Documentation Saved /XF *.pdb
+	}
+	else
+	{
+		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Intermediate Source Documentation Saved
+	}
+	
+	if ($Zip)
+	{
+		robocopy $engineZipPath (Join-Path ($output) "Builds\UnrealEngine_Win64.zip") 
+	}
 }
 
 }
