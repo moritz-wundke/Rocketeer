@@ -461,11 +461,11 @@ if ($output -ne "" -and $root -ne [String]::Empty)
 {
 	if ($NoPDBs)
 	{
-		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Intermediate Source Documentation Saved /XF *.pdb
+		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Documentation Saved /XF *.pdb
 	}
 	else
 	{
-		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Intermediate Source Documentation Saved
+		robocopy $enginePath (Join-Path ($output) "Builds\UnrealEngine_Win64") /MIR /PURGE /XD Documentation Saved
 	}
 	
 	if ($Zip)
