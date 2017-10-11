@@ -3,6 +3,7 @@
 # Copyright (C) 2017 - Playspace
 import inspect
 import argparse
+import sys
 
 __version__ = "1.0.0"
 __author__ = "Moritz Wundke"
