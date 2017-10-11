@@ -28,9 +28,15 @@ class Bunch(object):
 
 # Load our configuration
 def load_conf():
-    config_path = "conf"
-    with open(config_path, "r") as json_file:
-        return Bunch(json.load(json_file))
+    config_path = "config.json"
+    if os.path.isfile(config_path):
+        with open(config_path, "r") as json_file:
+            try:
+                return Bunch(json.load(json_file))
+            except Exception as e:
+                raise Exception("Failed to load 'conf.json' file with error: {error}".format(error=e))
+    else:
+        raise Exception("Missing '{path}'! Can not install without the configuration!".format(path=config_path))
     return Bunch({})
 __conf__ = load_conf()
 
