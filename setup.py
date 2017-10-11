@@ -15,18 +15,23 @@ import pip
 from setuptools.command.install import install as _install
 from distutils.sysconfig import get_python_lib
 
-import pslib
-
 # ----------------------------------------------------------------------------------------
 # Setup Configuration
 # ----------------------------------------------------------------------------------------
+
+class Bunch(object):
+    def __init__(self, adict):
+        self.__dict__.update(adict)
+
+    def raw(self):
+        return self.__dict__
 
 # Load our configuration
 def load_conf():
     config_path = "conf"
     with open(config_path, "r") as json_file:
-        return pslib.Bunch(json.load(json_file))
-    return pslib.Bunch({})
+        return Bunch(json.load(json_file))
+    return Bunch({})
 __conf__ = load_conf()
 
 # ----------------------------------------------------------------------------------------
