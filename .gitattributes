@@ -1,0 +1,28 @@
+# Autodetect text files
+* text=auto
+
+# Scripts must be in their native format
+*.bat       eol=crlf
+*.sh        eol=lf
+
+# All other text files should be in unix format always
+*.assets    eol=lf
+*.prefab    eol=lf
+*.shader    eol=lf
+*.mat       eol=lf
+*.meta      eol=lf
+*.cs        eol=lf
+*.xml       eol=lf
+*.json      eol=lf
+*.gradle    eol=lf
+*.projmods  eol=lf
+*.py        eol=lf
+*.c         eol=lf
+*.cpp       eol=lf
+*.h         eol=lf
+*.m         eol=lf
+*.mm        eol=lf
+*.java      eol=lf
+*.md        eol=lf
+*.text    	eol=lf
+*.txt    	eol=lf
