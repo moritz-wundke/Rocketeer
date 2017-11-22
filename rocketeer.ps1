@@ -190,10 +190,11 @@ echo $output
 
 if ($root -eq "" -and $root -eq [String]::Empty)
 {
-	$root = [System.IO.Path]::GetFullPath((Join-Path ($currentPwd) ..\))
+	$root = $currentPwd
 }
+$root = [System.IO.Path]::GetFullPath($root)
 
-$automationTool = [System.IO.Path]::GetFullPath(('{0}\Engine\Binaries\DotNET\AutomationTool.exe' -f $root, $sdk))
+$automationTool = [System.IO.Path]::GetFullPath(('{0}\Engine\Build\BatchFiles\RunUAT.bat' -f $root, $sdk))
 if (-not (Test-Path $automationTool))
 {
 	WriteInfo $helpMessage
