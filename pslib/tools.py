@@ -1,4 +1,4 @@
-#!/usr/bin#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 # Copyright (C) 2017 - Playspace
 import inspect
