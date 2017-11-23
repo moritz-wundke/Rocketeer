@@ -46,17 +46,18 @@ __conf__ = load_conf()
 
 class install(_install):
     def run(self):
-        pip.main(["install", "-r", "requirements"])
+        pip.main(["install", "--only-binary", "-r", "requirements"])
         _install.do_egg_install(self)
         self.execute(_post_install, (self.install_lib,), msg="Running post install task")
 
 def _post_install(install_lib):
-    from subprocess import call
-    post_install_script = os.path.join(install_lib, __import__('pkg_resources').get_distribution(__conf__.packagename).egg_name()+".egg", __conf__.packagename, __conf__.install)
-    if os.path.isfile(post_install_script):
-        call([sys.executable, post_install_script, install_lib])
-    else:
-        print("Skipping custom install script. {install} not found.".format(install=__conf__.install))
+    if __conf__.install:
+        from subprocess import call
+        post_install_script = os.path.join(install_lib, __import__('pkg_resources').get_distribution(__conf__.packagename).egg_name()+".egg", __conf__.packagename, __conf__.install)
+        if os.path.isfile(post_install_script):
+            call([sys.executable, post_install_script, install_lib])
+        else:
+            print("Skipping custom install script. {install} not found.".format(install=__conf__.install))
 
 # ----------------------------------------------------------------------------------------
 # Application entry points

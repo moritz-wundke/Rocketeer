@@ -1,0 +1,11 @@
+{
+    "packagename": "rocketeer",
+    "cliname":"rocketeer",
+    "version":"0.1",
+    "author":"Moritz Wundke",
+    "description":"",
+    "install":"",
+    "zip_safe":false,
+    "package_data":{},
+    "console_scripts":[]
+}
