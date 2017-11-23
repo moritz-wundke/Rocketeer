@@ -8,4 +8,4 @@ This library is just a skeleton for a tool based CLI client written in python. J
 
 ## Examples
 
-Still none up but we are on it ^^
+Still none up but we are on it!
