@@ -52,11 +52,11 @@ def register_tool(name=None, help=None):
         return cls
     return toolify
 
-def main_tool(argv=None):
+def main_tool(argv=None, description=__description__, version=__version__, copyright=__copyright__, author=__author__):
     if argv is None:
         argv = sys.argv
 
-    parser = argparse.ArgumentParser(add_help=True, argument_default=argparse.SUPPRESS, description=__description__.format(version=__version__, copyright=__copyright__, author=__author__))
+    parser = argparse.ArgumentParser(add_help=True, argument_default=argparse.SUPPRESS, description=description.format(version=version, copyright=copyright, author=author))
     parser.add_argument('--clean', action='store_true', default=False, help='Runs the action in clean mode', required=False)
     parser.add_argument('--dryrun', action='store_true', default=False, help='Run the action in dryrun mode', required=False)
     parser.add_argument('--force', action='store_true', default=False, help='Running in force mode will force the action to start in any case', required=False)
