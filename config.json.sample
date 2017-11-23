@@ -1,0 +1,11 @@
+{
+    "packagename": "SamplePackage",
+    "cliname":"samplep",
+    "version":"0.0.1",
+    "author":"Moritz Wundke",
+    "description":"PlaySpace sample CLI",
+    "install":"postinstall.py",
+    "zip_safe":false,
+    "package_data":{},
+    "console_scripts":["", ""]
+}
