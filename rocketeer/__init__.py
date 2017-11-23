@@ -1,5 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2017 - Moritz Wundke
 import sys
 from pslib.tools import main_tool
+import rocketeer.tools
 
 __version__ = "0.1"
 __author__ = "Moritz Wundke"

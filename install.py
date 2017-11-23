@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright (C) 2017 - Moritz Wundke
 import sys
 
 def main(argv):
