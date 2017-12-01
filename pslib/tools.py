@@ -4,6 +4,7 @@
 import inspect
 import argparse
 import sys
+from pslib import *
 
 __version__ = "1.0.0"
 __author__ = "Moritz Wundke"
@@ -60,10 +61,29 @@ def main_tool(argv=None, description=__description__, version=__version__, copyr
     parser.add_argument('--clean', action='store_true', default=False, help='Runs the action in clean mode', required=False)
     parser.add_argument('--dryrun', action='store_true', default=False, help='Run the action in dryrun mode', required=False)
     parser.add_argument('--force', action='store_true', default=False, help='Running in force mode will force the action to start in any case', required=False)
+    parser.add_argument('--interactive', action='store_true', default=False,
+                        help='Running the CLI in interactive mode', required=False)
 
     # Add first parser in the nested tree
     subparser = parser.add_subparsers(dest='tool', help='Available tools')
     subparser.required = True
     init_tools(subparser)
-    args = parser.parse_args(argv)
-    return execute_tool(args.tool, args)
+
+    if '--interactive' in argv:
+        log_info("Welcome to the interactive console. Type 'q' or 'quit' to exit the console.")
+        while True:
+
+            command = input_str('$').lower()
+            if command == 'q' or command == 'quit':
+                break
+
+            try:
+                args = parser.parse_args(command.split()+['--interactive'])
+                execute_tool(args.tool, args)
+            except SystemExit:
+                continue
+
+        return EXIT_CODE_SUCCESS
+    else:
+        args = parser.parse_args(argv)
+        return execute_tool(args.tool, args)

@@ -276,9 +276,11 @@ def get_config_checked(config_dict, key, type, validator, default_value=None):
 # Input handling
 # ----------------------------------------------------------------------------------------
 
-def input(prompt, default):
+def input(prompt, default = None):
     import builtins
-    return builtins.input("{} [{}]: ".format(prompt, default)) or default
+    if default:
+        return builtins.input("{} [{}]: ".format(prompt, default)) or default
+    return builtins.input("{}: ".format(prompt))
 
 def input_typed(prompt, default, type):
     if not isinstance(default, type):
@@ -294,7 +296,7 @@ def input_float(prompt, default):
 def input_int(prompt, default):
     return input_typed(prompt, default, int)
 
-def input_str(prompt, default):
+def input_str(prompt, default = ""):
     return input_typed(prompt, default, str)
 
 # ----------------------------------------------------------------------------------------

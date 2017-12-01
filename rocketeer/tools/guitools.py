@@ -7,7 +7,7 @@ from pslib.tools import register_tool, ITool
 @register_tool("gui", "Run Rocketeer in GUI mode")
 class GUITool(ITool):
     def __init__(self, parser):
-    	pass
+        pass
 
     def execute(self, args):
-    	print("Sorry no GUI yet!")
+        print("Sorry no GUI yet!")
