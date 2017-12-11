@@ -14,6 +14,9 @@ __description__ = "Flexible CLI tool builder - v{version} {copyright} ({author})
 registered_tools = {}
 instanced_tools = {}
 
+class ForceSystemExit(Exception):
+    pass
+
 class ITool:
     def __init__(self, parser):
         raise NotImplementedError('Tool "{}" must implement own __init__(self, parser) method'.format(str(self.__class__)))
@@ -78,7 +81,7 @@ def main_tool(argv=None, description=__description__, version=__version__, copyr
                 break
 
             try:
-                args = parser.parse_args(command.split()+['--interactive'])
+                args = parser.parse_args(command.split())
                 execute_tool(args.tool, args)
             except SystemExit:
                 continue

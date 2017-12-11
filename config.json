@@ -7,5 +7,9 @@
     "install":"",
     "zip_safe":false,
     "package_data":{},
-    "console_scripts":[]
+    "console_scripts":[],
+    "data_files":[
+        ["assets", "assets/*.*"]
+        ,["assets/buttons", "assets/buttons/*.*"]
+    ]
 }

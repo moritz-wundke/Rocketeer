@@ -7,8 +7,7 @@
 from setuptools import setup, find_packages
 import os
 import sys
-import subprocess
-import shutil
+from glob import glob
 import json
 import pip
 
@@ -46,7 +45,7 @@ __conf__ = load_conf()
 
 class install(_install):
     def run(self):
-        pip.main(["install", "--only-binary", "-r", "requirements"])
+        pip.main(["install", "-r", "requirements"])
         _install.do_egg_install(self)
         self.execute(_post_install, (self.install_lib,), msg="Running post install task")
 
@@ -67,6 +66,19 @@ console_scripts = []
 console_scripts.append('{cli}={package}:main'.format(cli=__conf__.cliname, package=__conf__.packagename))
 if __conf__.console_scripts and len(__conf__.console_scripts) > 0:
     console_scripts += __conf__.console_scripts
+
+# ----------------------------------------------------------------------------------------
+# Data Files
+# ----------------------------------------------------------------------------------------
+
+data_files = [(x[0], x[1]) for x in __conf__.data_files]
+print(data_files)
+
+
+
+# ----------------------------------------------------------------------------------------
+# Run Setup
+# ----------------------------------------------------------------------------------------
 
 setup(
         name=__conf__.packagename,
