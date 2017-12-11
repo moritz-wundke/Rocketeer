@@ -45,7 +45,9 @@ __conf__ = load_conf()
 
 class install(_install):
     def run(self):
+        # TODO: Add platform dependent requierements
         pip.main(["install", "-r", "requirements"])
+
         _install.do_egg_install(self)
         self.execute(_post_install, (self.install_lib,), msg="Running post install task")
 
@@ -71,10 +73,8 @@ if __conf__.console_scripts and len(__conf__.console_scripts) > 0:
 # Data Files
 # ----------------------------------------------------------------------------------------
 
-data_files = [(x[0], x[1]) for x in __conf__.data_files]
-print(data_files)
-
-
+# TODO: Add to setup
+data_files = [(x[0], glob(x[1])) for x in __conf__.data_files]
 
 # ----------------------------------------------------------------------------------------
 # Run Setup
